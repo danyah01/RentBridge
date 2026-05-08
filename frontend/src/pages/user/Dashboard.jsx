@@ -194,6 +194,7 @@ function KpiCard({ eyebrow, value, link, accent }) {
           border-radius: 18px;
           transition: all .15s var(--ease);
         }
+        .kpi-card .kpi { color: var(--ink); }
         .kpi-card.accent {
           background: linear-gradient(180deg, #111a2d 0%, #08111f 100%);
           color: var(--ink);
