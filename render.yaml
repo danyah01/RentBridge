@@ -1,0 +1,37 @@
+# render.yaml — sample Render Blueprint for the RentBridge backend.
+# Push your repo, then "New → Blueprint" in Render and point at this file.
+#
+# Replace the env values in the dashboard before going live (especially
+# MONGO_URI and JWT_SECRET).
+
+services:
+  - type: web
+    name: rentbridge-api
+    env: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        sync: false   # paste your Vercel/Netlify URL here
+      - key: BCRYPT_SALT_ROUNDS
+        value: 10
+      - key: SUSPICIOUS_LARGE_AMOUNT
+        value: 100000
+      - key: SUSPICIOUS_RAPID_COUNT
+        value: 5
+      - key: SUSPICIOUS_RAPID_WINDOW_MINUTES
+        value: 10

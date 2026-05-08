@@ -1,0 +1,261 @@
+{
+  "info": {
+    "name": "RentBridge API",
+    "_postman_id": "00000000-0000-0000-0000-000000000001",
+    "description": "Full API surface for RentBridge.\n\nVariables: base, token. Set `base` to e.g. http://localhost:5000 and `token` from the Login response.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base}}/api/health"
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        { "name": "Register", "request": {
+          "method": "POST",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"Demo@123\"\n}" },
+          "url": "{{base}}/api/auth/register"
+        }},
+        { "name": "Login", "request": {
+          "method": "POST",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": { "mode": "raw", "raw": "{\n  \"email\": \"ali@rentbridge.test\",\n  \"password\": \"Demo@123\"\n}" },
+          "url": "{{base}}/api/auth/login"
+        }},
+        { "name": "Me", "request": {
+          "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/auth/me"
+        }},
+        { "name": "Logout", "request": {
+          "method": "POST",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/auth/logout"
+        }},
+        { "name": "Change password", "request": {
+          "method": "PUT",
+          "header": [
+            { "key": "Authorization", "value": "Bearer {{token}}" },
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"oldPassword\": \"Demo@123\",\n  \"newPassword\": \"Demo@1234\"\n}" },
+          "url": "{{base}}/api/auth/change-password"
+        }}
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        { "name": "Get profile", "request": {
+          "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/users/profile"
+        }},
+        { "name": "Update profile", "request": {
+          "method": "PUT",
+          "header": [
+            { "key": "Authorization", "value": "Bearer {{token}}" },
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"name\": \"Ali Updated\",\n  \"phone\": \"+92 300 0000000\"\n}" },
+          "url": "{{base}}/api/users/profile"
+        }}
+      ]
+    },
+    {
+      "name": "Wallet",
+      "item": [
+        { "name": "Get wallet", "request": {
+          "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/wallet"
+        }},
+        { "name": "Summary", "request": {
+          "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/wallet/summary"
+        }},
+        { "name": "Deposit", "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Authorization", "value": "Bearer {{token}}" },
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"amount\": 1500,\n  \"description\": \"Top up\"\n}" },
+          "url": "{{base}}/api/wallet/deposit"
+        }},
+        { "name": "Withdraw", "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Authorization", "value": "Bearer {{token}}" },
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"amount\": 500,\n  \"description\": \"ATM cash out\"\n}" },
+          "url": "{{base}}/api/wallet/withdraw"
+        }},
+        { "name": "Transfer", "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Authorization", "value": "Bearer {{token}}" },
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"receiverEmail\": \"sara@rentbridge.test\",\n  \"amount\": 200,\n  \"description\": \"Lunch split\"\n}" },
+          "url": "{{base}}/api/wallet/transfer"
+        }}
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        { "name": "List", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/transactions" } },
+        { "name": "List with filters", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/transactions?type=transfer&status=successful" } },
+        { "name": "Monthly summary", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/transactions/summary/monthly" } },
+        { "name": "Get one", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/transactions/{{txnId}}" } },
+        { "name": "Receipt", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/transactions/{{txnId}}/receipt" } }
+      ]
+    },
+    {
+      "name": "Expenses",
+      "item": [
+        { "name": "Create", "request": { "method": "POST",
+          "header": [
+            { "key": "Authorization", "value": "Bearer {{token}}" },
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"title\": \"Groceries\",\n  \"amount\": 1200,\n  \"category\": \"food\",\n  \"paymentMethod\": \"Wallet\"\n}" },
+          "url": "{{base}}/api/expenses" } },
+        { "name": "List", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/expenses" } },
+        { "name": "Monthly summary", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/expenses/summary/monthly" } },
+        { "name": "Category summary", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/expenses/summary/categories" } },
+        { "name": "Update", "request": { "method": "PUT",
+          "header": [
+            { "key": "Authorization", "value": "Bearer {{token}}" },
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"amount\": 1500\n}" },
+          "url": "{{base}}/api/expenses/{{expenseId}}" } },
+        { "name": "Delete", "request": { "method": "DELETE",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/expenses/{{expenseId}}" } }
+      ]
+    },
+    {
+      "name": "Budgets",
+      "item": [
+        { "name": "Create", "request": { "method": "POST",
+          "header": [
+            { "key": "Authorization", "value": "Bearer {{token}}" },
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"month\": \"2026-05\",\n  \"totalLimit\": 25000,\n  \"warningThreshold\": 0.8\n}" },
+          "url": "{{base}}/api/budgets" } },
+        { "name": "List", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/budgets" } },
+        { "name": "Current", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/budgets/current" } }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        { "name": "List active", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/categories" } }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        { "name": "List", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/notifications" } },
+        { "name": "Mark all read", "request": { "method": "PATCH",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/notifications/read-all" } }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        { "name": "User dashboard", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/reports/user-dashboard" } },
+        { "name": "Income vs expense", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/reports/income-expense" } },
+        { "name": "Budget usage", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": "{{base}}/api/reports/budget-usage" } }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        { "name": "Dashboard", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+          "url": "{{base}}/api/admin/dashboard" } },
+        { "name": "List users", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+          "url": "{{base}}/api/admin/users" } },
+        { "name": "Block user", "request": { "method": "PATCH",
+          "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+          "url": "{{base}}/api/admin/users/{{userId}}/block" } },
+        { "name": "Unblock user", "request": { "method": "PATCH",
+          "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+          "url": "{{base}}/api/admin/users/{{userId}}/unblock" } },
+        { "name": "List wallets", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+          "url": "{{base}}/api/admin/wallets" } },
+        { "name": "List transactions", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+          "url": "{{base}}/api/admin/transactions" } },
+        { "name": "List flagged", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+          "url": "{{base}}/api/admin/transactions/flagged" } },
+        { "name": "Create category", "request": { "method": "POST",
+          "header": [
+            { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"name\": \"Travel\",\n  \"type\": \"expense\",\n  \"description\": \"Trips, transport, fuel\"\n}" },
+          "url": "{{base}}/api/admin/categories" } },
+        { "name": "Audit logs", "request": { "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+          "url": "{{base}}/api/admin/audit-logs" } }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base",        "value": "http://localhost:5000" },
+    { "key": "token",       "value": "" },
+    { "key": "adminToken",  "value": "" },
+    { "key": "txnId",       "value": "" },
+    { "key": "expenseId",   "value": "" },
+    { "key": "userId",      "value": "" }
+  ]
+}
