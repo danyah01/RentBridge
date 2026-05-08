@@ -177,20 +177,26 @@ export default function Landing() {
         }
 
         .hero-card {
-          background: var(--ink);
-          color: var(--bg);
+          /* Dark glass card with neon accent */
+          background: linear-gradient(180deg, rgba(13,20,36,0.60), rgba(8,12,22,0.45));
+          backdrop-filter: blur(8px) saturate(120%);
+          -webkit-backdrop-filter: blur(8px) saturate(120%);
+          color: var(--ink);
           padding: 28px;
-          border-radius: 4px;
-          border: 1px solid #1a2331;
-          box-shadow: var(--shadow-pop);
+          border-radius: 14px;
+          border: 1px solid rgba(77,227,255,0.06);
+          box-shadow: 0 28px 80px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(77,227,255,.02);
           position: relative;
           overflow: hidden;
         }
         .hero-card::before {
+          /* gentle holographic glow */
           content: '';
-          position: absolute; top: -40%; right: -20%;
-          width: 280px; height: 280px;
-          background: radial-gradient(circle, rgba(212,165,116,.18), transparent 70%);
+          position: absolute; top: -30%; right: -18%;
+          width: 360px; height: 360px;
+          background: radial-gradient(circle at 30% 30%, rgba(77,227,255,0.08), transparent 35%),
+                      radial-gradient(circle at 80% 70%, rgba(157,151,255,0.04), transparent 30%);
+          filter: blur(10px);
           pointer-events: none;
         }
         .mc-head {
@@ -198,15 +204,15 @@ export default function Landing() {
           margin-bottom: 22px; padding-bottom: 22px;
           border-bottom: 1px solid rgba(255,255,255,.08);
         }
-        .mc-head .kpi-label { color: rgba(255,255,255,.55); }
-        .mc-head .kpi { color: var(--bg); font-size: 2rem; }
+        .mc-head .kpi-label { color: rgba(237,244,255,.65); }
+        .mc-head .kpi { color: var(--ink); font-size: 2rem; }
         .kpi-dec { color: var(--brass-2); font-size: 1.1rem; }
         .mc-row {
           display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
           margin-bottom: 22px;
         }
-        .mc-row .muted { color: rgba(255,255,255,.5); }
-        .mc-row .bold { color: var(--bg); font-size: 16px; }
+        .mc-row .muted { color: rgba(237,244,255,.6); }
+        .mc-row .bold { color: var(--ink); font-size: 16px; }
         .mc-tx { display: flex; flex-direction: column; gap: 10px; }
         .mc-tx-row {
           display: grid; grid-template-columns: 14px 1fr auto;

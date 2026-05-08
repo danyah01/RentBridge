@@ -78,6 +78,7 @@ const auth = {
 const users = {
   getProfile:    () => api.get('/api/users/profile'),
   updateProfile: (payload) => api.put('/api/users/profile', payload),
+  deleteProfile: () => api.delete('/api/users/profile'),
 };
 
 const wallet = {

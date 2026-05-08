@@ -11,6 +11,9 @@
  */
 
 const User = require('../models/User');
+const Wallet = require('../models/Wallet');
+const Transaction = require('../models/Transaction');
+const AuditLog = require('../models/AuditLog');
 const { ok, asyncHandler, fail } = require('../utils/response');
 
 // GET /api/users/profile
@@ -33,4 +36,34 @@ exports.updateProfile = asyncHandler(async (req, res) => {
   if (!user) return fail(res, 'User not found', 404);
 
   return ok(res, { user: user.toSafeJSON() }, 'Profile updated');
+});
+
+// DELETE /api/users/profile
+// Soft-delete: anonymize user, mark as deleted, remove related data
+exports.deleteProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) return fail(res, 'User not found', 404);
+
+  // Mark deleted and anonymize personal data
+  user.status = 'deleted';
+  user.email = `deleted+${user._id}@removed.local`;
+  user.name = 'Deleted User';
+  user.phone = null;
+  user.deletedAt = new Date();
+  await user.save();
+
+  // Remove wallet and transactions
+  await Wallet.deleteMany({ userId: user._id });
+  await Transaction.deleteMany({ $or: [{ senderId: user._id }, { receiverId: user._id }] });
+
+  // Log the deletion for audit trail
+  await AuditLog.create({
+    actorId: user._id,
+    action: 'SELF_DELETE',
+    targetType: 'user',
+    targetId: user._id.toString(),
+    ipAddress: req.ip,
+  });
+
+  return ok(res, {}, 'Account deleted successfully');
 });

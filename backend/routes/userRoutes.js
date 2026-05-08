@@ -13,5 +13,6 @@ const { profileUpdateRules } = require('../validations/schemas');
 
 router.get('/profile', auth, ctrl.getProfile);
 router.put('/profile', auth, validateBody(profileUpdateRules), ctrl.updateProfile);
+router.delete('/profile', auth, ctrl.deleteProfile);
 
 module.exports = router;

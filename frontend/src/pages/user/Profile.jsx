@@ -2,6 +2,7 @@
 // Edit profile (name + phone) and change password.
 
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import PageHeader from '../../components/ui/PageHeader.jsx';
 import { ErrorBox } from '../../components/ui/States.jsx';
@@ -10,7 +11,8 @@ import { useToast } from '../../context/ToastContext.jsx';
 import { fmtDateTime } from '../../utils/format';
 
 export default function Profile() {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
+  const navigate = useNavigate();
   const toast = useToast();
 
   const [name, setName] = useState(user?.name || '');
@@ -26,6 +28,10 @@ export default function Profile() {
   const [confirmPwd, setConfirmPwd] = useState('');
   const [savingPwd, setSavingPwd] = useState(false);
   const [pwdError, setPwdError] = useState('');
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
     setName(user?.name || '');
@@ -64,6 +70,21 @@ export default function Profile() {
       setOldPassword(''); setNewPassword(''); setConfirmPwd('');
       toast.ok('Password changed');
     } catch (err) { setPwdError(err.message); } finally { setSavingPwd(false); }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleteError('');
+    setDeletingAccount(true);
+    try {
+      await api.users.deleteProfile();
+      toast.ok('Account deleted');
+      logout();
+      navigate('/');
+    } catch (err) {
+      setDeleteError(err.message);
+    } finally {
+      setDeletingAccount(false);
+    }
   };
 
   return (
@@ -145,6 +166,66 @@ export default function Profile() {
           <Info label="Monthly income" value={user?.monthlyIncome ? `PKR ${Number(user.monthlyIncome).toLocaleString('en-PK')}` : '—'} />
         </div>
       </div>
+
+      <div className="card" style={{ marginTop: 22, borderColor: 'var(--bad-soft)' }}>
+        <h3 className="card-title" style={{ color: 'var(--bad)' }}>Delete account</h3>
+        <p className="muted">This action is permanent. All data associated with your account will be removed.</p>
+        <button
+          className="btn"
+          style={{ background: 'var(--bad)', color: 'white', marginTop: 12 }}
+          onClick={() => setShowDeleteModal(true)}
+        >
+          Delete my account
+        </button>
+      </div>
+
+      {/* Delete confirmation modal */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => !deletingAccount && setShowDeleteModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ marginBottom: 10, color: 'var(--bad)' }}>Delete account?</h3>
+            <p className="muted">
+              This will permanently delete your account, wallet, and all transaction history.
+              This action <strong>cannot be undone</strong>.
+            </p>
+            <ErrorBox message={deleteError} />
+            <div className="row" style={{ gap: 10, marginTop: 20, justifyContent: 'flex-end' }}>
+              <button
+                className="btn btn-ghost"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deletingAccount}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn"
+                style={{ background: 'var(--bad)', color: 'white' }}
+                onClick={handleDeleteAccount}
+                disabled={deletingAccount}
+              >
+                {deletingAccount ? <span className="spinner" /> : 'Yes, delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        .modal-overlay {
+          position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.7);
+          display: flex; align-items: center; justify-content: center;
+          z-index: 9999;
+        }
+        .modal {
+          background: var(--surface);
+          border: 1px solid var(--line);
+          padding: 28px;
+          border-radius: 12px;
+          max-width: 420px;
+          box-shadow: var(--shadow-pop);
+        }
+      `}</style>
     </div>
   );
 }
